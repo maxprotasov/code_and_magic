@@ -1,7 +1,7 @@
 # Личный проект «Код и Магия» [![Build status][travis-image]][travis-url] [![Dependency status][dependency-image]][dependency-url]
 
 * Студент: [Evgeny Kudryavtsev](https://up.htmlacademy.ru/javascript/7/user/166603).
-* Наставник: `Неизвестно`.
+* Наставник: [Софья Ильинова](https://htmlacademy.ru/profile/i).
 
 ---
 
