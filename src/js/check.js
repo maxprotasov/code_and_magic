@@ -1,6 +1,8 @@
-'use strict'
+'use strict';
 
-function getMessage (a, b) {
+/*eslint-disable no-unused-vars*/
+function getMessage(a, b) {
+/*eslint-enable no-unused-vars*/
 
   if (typeof a === 'boolean') {
     return a ? 'Я попал в ' + b : 'Я никуда не попал';
@@ -18,7 +20,7 @@ function getMessage (a, b) {
   }
 
   if (Array.isArray(a) && Array.isArray(b)) {
-    var distancePath = a.reduce(function (sum, current, i) {
+    var distancePath = a.reduce(function(sum, current, i) {
       return sum + current * b[i];
     }, 0);
     return 'Я прошёл ' + distancePath + ' метров';
