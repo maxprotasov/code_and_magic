@@ -409,10 +409,13 @@ window.Game = (function() {
      */
     _drawPauseScreen: function() {
       var x0 = 310;
-      var y0 = 90;
+      var y0 = 80;
       var messageWidth = 300;
       var messageHeight = 150;
       var shadowOffset = 10;
+
+      var padding = 10;
+      var maxWidth = messageWidth - 2 * padding;
 
       this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
       this.ctx.fillRect(x0, y0, messageWidth, messageHeight);
@@ -429,20 +432,43 @@ window.Game = (function() {
       var coefficientLineHeight = 1.2;
       var lineHeight = coefficientLineHeight * parseInt(fontSize, 10);
 
+      function printString(ctx, string, strNumber) {
+        ctx.fillText(string, x0 + padding, y0 + padding + lineHeight * strNumber);
+      }
+
+      function printMessage(msg, context) {
+        var stringNumber = 0;
+        var msgArr = msg.split(' ');
+        var newString = msgArr.shift();
+
+        msgArr.forEach(function(word) {
+          var previousSring = newString;
+          newString += ' ' + word;
+
+          var testText = context.measureText(newString);
+
+          if (testText.width > maxWidth) {
+            printString(context, previousSring, stringNumber);
+
+            stringNumber++;
+            newString = word;
+          }
+        });
+        printString(context, newString, stringNumber);
+      }
 
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          this.ctx.fillText('you have won!', x0, y0);
+          printMessage('you have won!', this.ctx);
           break;
         case Verdict.FAIL:
-          this.ctx.fillText('you have failed!', x0, y0);
+          printMessage('you have failed!', this.ctx);
           break;
         case Verdict.PAUSE:
-          this.ctx.fillText('game is on pause!', x0, y0);
+          printMessage('game is on pause!', this.ctx);
           break;
         case Verdict.INTRO:
-          this.ctx.fillText('welcome to the game!', x0, y0);
-          this.ctx.fillText('Press Space to start', x0, y0 + lineHeight);
+          printMessage('welcome to the game! Press Space to start', this.ctx);
           break;
       }
     },
