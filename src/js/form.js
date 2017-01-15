@@ -30,64 +30,92 @@ window.form = (function() {
     form.close();
   };
 
-  return form;
-})();
+  var formElements = document.querySelector(".review-form");
+  var labelName = document.querySelector(".review-fields-name");
+  var labelText = document.querySelector(".review-fields-text");
+  var formLabels = document.querySelector(".review-fields");
+  var formButton = document.querySelector(".review-submit");
+  var inputName = document.querySelector("#review-name");
+  var inputArea = document.querySelector("#review-text");
+  var radioGroup = document.querySelector(".review-form-group-mark");
+  var browserCookies = require("browser-cookies");
 
-var formElements = document.querySelector('.review-form').elements;
 
-var marksBlock = document.querySelector('.review-form-group-mark');
-var marks = formElements['review-mark'];
+  formButton.disabled = true;
+  inputName.required = true;
 
-var nameField = formElements['review-name'];
-var textField = formElements['review-text'];
-
-var nameLink = document.querySelector('.review-fields-name');
-var textLink = document.querySelector('.review-fields-text');
-var submitBtn = document.querySelector('.review-submit');
-var linksBlock = document.querySelector('.review-fields');
-
-nameField.required = true;
-textLink.classList.add('invisible');
-submitBtn.disabled = true;
-
-function toggleClass(element, className, shouldAdd) {
-
-  if (shouldAdd) {
-    element.classList.add(className);
-  } else {
-    element.classList.remove(className);
-  }
-
-}
-
-function getRadioValue() {
-  for (var i = 0; i < marks.length; i++) {
-
-    if (marks[i].checked) {
-      return marks[i].value;
+  var checkMark = function() {
+    var radioChecked = document.querySelector('input[name=review-mark]:checked');
+    if (radioChecked.value < 3) {
+      labelText.classList.remove('invisible');
+      inputArea.required = true;
+    } else {
+      labelText.classList.add('invisible');
+      inputArea.required = false;
     }
 
-  }
-  return '';
-}
+  };
 
-function checkFormValid() {
-  var isFormValid = nameField.validity.valid && textField.validity.valid;
+  var checkName = function () {
+    inputName.value = browserCookies.get('name') || '';
+  };
 
-  submitBtn.disabled = !isFormValid;
-  toggleClass(linksBlock, 'invisible', isFormValid);
-  toggleClass(textLink, 'invisible', textField.validity.valid);
-  toggleClass(nameLink, 'invisible', nameField.validity.valid);
-}
+  var formValidityCheck = function() {
+    var formIsValid = inputName.validity.valid && inputArea.validity.valid;
+    formButton.disabled = !formIsValid;
+    formLabels.classList.toggle('invisible', formIsValid);
+  };
 
-marksBlock.onchange = function() {
-  var isRatingBad = Number(getRadioValue()) <= 2;
+  var setRating = function() {
+    var ratingFromCookies = browserCookies.get('rating'),
+      radios = document.querySelectorAll('input[name=review-mark]');
+    if (ratingFromCookies) {
+      for (let item of radios) {
+        item.checked = ratingFromCookies && (item.value == ratingFromCookies);
+      }
+    }
+  };
+  setRating();
+  checkName();
+  formValidityCheck();
+  checkMark();
 
-  textField.required = isRatingBad;
+  var findExpirePeriod = function() {
+    var currentYearBirthDate = new Date('2016-04-05'),
+      dateNow = new Date();
+    currentYearBirthDate.setFullYear(dateNow.getFullYear());
+    if (dateNow - currentYearBirthDate <= 0) {
+      currentYearBirthDate.setFullYear(currentYearBirthDate.getFullYear() - 1);
+    }
+    var date = +dateNow - +currentYearBirthDate;
+    return new Date(dateNow * 2 - currentYearBirthDate);
+  };
 
-  checkFormValid();
-};
+  inputName.oninput = function () {
+    labelName.classList.toggle('invisible', inputName.validity.valid);
+    formValidityCheck();
+  };
 
-nameField.oninput = checkFormValid;
+  inputArea.oninput = function () {
+    labelText.classList.toggle('invisible', inputArea.validity.valid);
+    formValidityCheck();
+  };
 
-textField.oninput = checkFormValid;
+  radioGroup.onchange = function() {
+    checkMark();
+    formValidityCheck();
+  };
+
+  formElements.onsubmit = function () {
+    var radioChecked = document.querySelector('input[name=review-mark]:checked');
+    browserCookies.set('rating', radioChecked.value, {
+      expires: findExpirePeriod()
+    });
+    browserCookies.set('name', inputName.value, {
+      expires: findExpirePeriod()
+    });
+
+  };
+
+  return form;
+})();
