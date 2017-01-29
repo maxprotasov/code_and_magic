@@ -1,6 +1,6 @@
 'use strict';
 
-window.Game = (function() {
+define( function () {
   /**
    * @const
    * @type {number}
@@ -397,7 +397,7 @@ window.Game = (function() {
       if (evt.keyCode === 32 && !this._deactivated) {
         evt.preventDefault();
         var needToRestartTheGame = this.state.currentStatus === Verdict.WIN ||
-            this.state.currentStatus === Verdict.FAIL;
+          this.state.currentStatus === Verdict.FAIL;
         this.initializeLevelAndStart(needToRestartTheGame);
 
         window.removeEventListener('keydown', this._pauseListener);
@@ -408,69 +408,69 @@ window.Game = (function() {
      * Отрисовка экрана паузы.
      */
     _drawPauseScreen: function() {
-      var x0 = 310;
-      var y0 = 80;
-      var messageWidth = 300;
-      var messageHeight = 150;
-      var shadowOffset = 10;
 
-      var padding = 10;
-      var maxWidth = messageWidth - 2 * padding;
-
-      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-      this.ctx.fillRect(x0, y0, messageWidth, messageHeight);
-      this.ctx.fillStyle = '#ffffff';
-      this.ctx.fillRect(x0 - shadowOffset, y0 - shadowOffset, messageWidth, messageHeight);
-      this.ctx.fillStyle = '#000000';
-
-      var fontSize = '16px';
-      var fontName = 'PT Mono';
-
-      this.ctx.font = fontSize + ' ' + fontName;
-      this.ctx.textBaseline = 'hanging';
-
-      var coefficientLineHeight = 1.2;
-      var lineHeight = coefficientLineHeight * parseInt(fontSize, 10);
-
-      function printString(ctx, string, strNumber) {
-        ctx.fillText(string, x0 + padding, y0 + padding + lineHeight * strNumber);
-      }
-
-      function printMessage(msg, context) {
-        var stringNumber = 0;
-        var msgArr = msg.split(' ');
-        var newString = msgArr.shift();
-
-        msgArr.forEach(function(word) {
-          var previousSring = newString;
-          newString += ' ' + word;
-
-          var testText = context.measureText(newString);
-
-          if (testText.width > maxWidth) {
-            printString(context, previousSring, stringNumber);
-
-            stringNumber++;
-            newString = word;
-          }
-        });
-        printString(context, newString, stringNumber);
-      }
 
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          printMessage('you have won!', this.ctx);
+          drawBox.call(this, 'Вы победили!', 300);
+          console.log('You have won!');
           break;
         case Verdict.FAIL:
-          printMessage('you have failed!', this.ctx);
+          drawBox.call(this, 'Вы проиграли!', 300);
+          console.log('You have failed!');
           break;
         case Verdict.PAUSE:
-          printMessage('game is on pause!', this.ctx);
+          drawBox.call(this, 'Пауза', 300);
+          console.log('Game is on pause!');
           break;
         case Verdict.INTRO:
-          printMessage('welcome to the game! Press Space to start', this.ctx);
+          drawBox.call(this ,'Добро пожаловать! Нажмите Пробел чтобы начать', 300 );
+          console.log('Welcome to the game! Press Space to start');
           break;
       }
+
+      function drawBox( message, recievedWidth ) {
+
+        this.ctx.font = '16px PT Mono';
+        this.ctx.textBaseline = 'hanging';
+
+        var arrWord = message.split( ' ' ),
+          arrLine = [],
+          bufferString = "",
+          testString = arrWord[0] + ' ';
+        for (let i = 0; i <= arrWord.length - 1; i++) {
+          if ( this.ctx.measureText( testString ).width <= recievedWidth - 30 ) {
+            bufferString += arrWord[i] + ' ';
+          } else {
+            testString = '';
+            testString = arrWord[i];
+            arrLine.push(bufferString);
+            bufferString = '';
+            bufferString += arrWord[i] + ' ';
+          };
+          if (i == arrWord.length - 1) {
+            arrLine.push(bufferString);
+          };
+          testString += arrWord[i+1] + ' ';
+        };
+
+        var box = {
+          height: arrLine.length * 16 + 30,
+          width: recievedWidth
+        };
+        box.left = this.canvas.width/2 - recievedWidth/2;
+        box.top = this.canvas.height/2 - box.height/2;
+
+        this.ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+        this.ctx.fillRect( box.left + 10, box.top + 10, box.width, box.height);
+        this.ctx.fillStyle = "#FFF";
+        this.ctx.fillRect( box.left, box.top, box.width, box.height);
+        this.ctx.fillStyle = "#000";
+        for (let i = 0; i <= arrLine.length - 1; i++) {
+          this.ctx.fillText( arrLine[i], box.left + 15, box.top + 15 + i * 18);
+        }
+      }
+
     },
 
     /**
@@ -576,14 +576,14 @@ window.Game = (function() {
            * @param {Object} state
            * @return {Verdict}
            */
-          function(state) {
+            function(state) {
             var me = state.objects.filter(function(object) {
               return object.type === ObjectType.ME;
             })[0];
 
             return me.state === ObjectState.DISPOSED ?
-                Verdict.FAIL :
-                Verdict.CONTINUE;
+              Verdict.FAIL :
+              Verdict.CONTINUE;
           },
 
           /**
@@ -591,7 +591,7 @@ window.Game = (function() {
            * @param {Object} state
            * @return {Verdict}
            */
-          function(state) {
+            function(state) {
             return state.keysPressed.ESC ? Verdict.PAUSE : Verdict.CONTINUE;
           },
 
@@ -600,10 +600,10 @@ window.Game = (function() {
            * @param {Object} state
            * @return {Verdict}
            */
-          function(state) {
+            function(state) {
             return Date.now() - state.startTime > 3 * 60 * 1000 ?
-                Verdict.FAIL :
-                Verdict.CONTINUE;
+              Verdict.FAIL :
+              Verdict.CONTINUE;
           }
         ];
       }
@@ -754,5 +754,36 @@ window.Game = (function() {
 
   Game.Verdict = Verdict;
 
+  var SHIFT_COFFICIENT = 1,
+    THROTTLE_DELAY = 100,
+    cloudsBlock = document.querySelector('.header-clouds'),
+    gameBlock = document.querySelector('.demo'),
+    cloudsAreVisible;
+
+  function checkVisibility() {
+    var rect = cloudsBlock.getBoundingClientRect();
+    cloudsAreVisible = (rect.height + rect.top) > 0;
+    // rect = gameBlock.getBoundingClientRect();
+    // if ((rect.height + rect.top) > 0) {
+    //   Game.prototype.setGameStatus(Game.Verdict.PAUSE);
+    // };
+  }
+
+
+  (function setScrollEnabled() {
+    var lastDate = Date.now();
+    window.addEventListener('scroll', function () {
+      if (Date.now() - lastDate >= THROTTLE_DELAY) {
+        checkVisibility();
+        lastDate = Date.now();
+      }
+      if (cloudsAreVisible) {
+        cloudsBlock.style.backgroundPositionX = -(window.pageYOffset * SHIFT_COFFICIENT) + 'px';
+      }
+    });
+  })();
+
+
+
   return Game;
-})();
+});

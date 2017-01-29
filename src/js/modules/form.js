@@ -1,6 +1,6 @@
 'use strict';
 
-window.form = (function() {
+define( function () {
   var formContainer = document.querySelector('.overlay-container');
   var formCloseButton = document.querySelector('.review-form-close');
 
@@ -118,4 +118,4 @@ window.form = (function() {
   };
 
   return form;
-})();
+});
