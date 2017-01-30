@@ -39,9 +39,9 @@ define([
 
   var gallery = new Gallery(pictures);
   Array.prototype.forEach.call(galleryPicturesLinks, function(picture, activePicture) {
-    picture.onclick = function() {
+    picture.addEventListener('click', function () {
       gallery.show(activePicture);
-    };
+    });
   });
 
 });

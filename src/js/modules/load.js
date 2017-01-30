@@ -26,7 +26,7 @@ define ( function () {
       xhr.addEventListener('readystatechange', function () {
         if (xhr.readyState == 4) {
           reviewsBlock.classList.remove('reviews-list-loading');
-        };
+        }
       });
 
       xhr.open('GET', url );

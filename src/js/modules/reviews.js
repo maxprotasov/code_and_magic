@@ -21,7 +21,7 @@ define([
       filterBlock.addEventListener('click', function (event) {
         if (event.target.tagName == 'INPUT') {
           numberOfCurrentPage = render.setFilterEnabled( reviewsCollection[event.target.id]);
-        };
+        }
       });
       showMoreButton.addEventListener('click', function () {
         numberOfCurrentPage++;
