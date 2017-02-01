@@ -5,7 +5,6 @@ define ( function () {
     selectedFilterId : function () {
       return document.querySelector('input[name=reviews]:checked').id;
     },
-    /** @param {Array.<Object>} reviewsObject */
     setEmptyFilterDisabled : function (nameOfList) {
       document.querySelector('#' + nameOfList).disabled = true;
       document.querySelector('label[for=' + nameOfList + ']').classList.add('reviews-filter-item-disabled');
@@ -52,7 +51,7 @@ define ( function () {
         return second.review_usefulness - first.review_usefulness;
       });
 
-      return reviewsObject;
+      return  reviewsObject;
     }
   }
 });

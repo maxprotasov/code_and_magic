@@ -4,7 +4,7 @@ define( function () {
 
   var Gallery = function (src) {
     this.pictures = src;
-    this.activePicture = 2;
+    this.activePicture = null;
     this.galleryContainer = document.querySelector('.overlay-gallery');
     this.galleryClose = this.galleryContainer.querySelector('.overlay-gallery-close');
     this.controlPrevious = this.galleryContainer.querySelector('.overlay-gallery-control-left');

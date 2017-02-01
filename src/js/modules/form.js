@@ -70,7 +70,7 @@ define( function () {
     var ratingFromCookies = browserCookies.get('rating'),
       radios = document.querySelectorAll('input[name=review-mark]');
     if (ratingFromCookies) {
-      for (let item of radios) {
+      for ( let item of radios) {
         item.checked = ratingFromCookies && (item.value == ratingFromCookies);
       }
     }

@@ -48,7 +48,7 @@ define (['./utils'], function(utils) {
         image.style.height = '124px';
       });
 
-      avatarImage.addEventListener('error', function (event) {
+      avatarImage.addEventListener('error', function () {
         element.classList.add('review-load-failure');
       });
 

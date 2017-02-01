@@ -8,7 +8,7 @@ define([
   return function () {
     var showMoreButton = document.querySelector('.reviews-controls-more'),
       filterBlock = document.querySelector('.reviews-filter'),
-      elementToClone, reviewsCollection, numberOfCurrentPage = 1;
+      reviewsCollection, numberOfCurrentPage = 1;
 
     /** @const {string} */
     var REVIEWS_URL = '//o0.github.io/assets/json/reviews.json';
